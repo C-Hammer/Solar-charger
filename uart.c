@@ -13,7 +13,7 @@
 //UCSRA: USART Control Register A
 //UCSRB: USART Control Register B
 //UCSRC: USART Control Register C
-//TODO:  - interrupt implementation for UART
+//TODO:  - interrupt operation UART
 //
 void UART_init(void)
 {
@@ -101,12 +101,16 @@ int main()
 	
     DDRC = (1<<PC5);	// Port C 5 as output
     PORTC = (1<<PC5);	// LED off
-    UART_init();		//
-    UART_send_c(0x79);	//
+    UART_init();		// initialise UART with defined settings
+    UART_send_c(0x79);	// 'y' = x79
+    
+    // send all characters from '0' (x30) to '9' (x39)
     for(uint8_t i=0;i<=9;++i) {
-    	c = i + 0x30;	// 'c' = x30
+    	c = i + 0x30;	// '0 = x30
     	UART_send_c(c); // send via UART
     }
+    
+    // endless loop
     while(1)
     {
     	c = UART_read_c();	// wait for received message
@@ -129,7 +133,7 @@ int main()
     			PORTC = (1<<PC5);
     		}
     	}
-    	
+    	UART_send_c(c);		// confirm received character, sending back
     }
     return 0;	// never reached
 }
